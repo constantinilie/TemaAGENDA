@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Agenda.Activitate;
 
 namespace Agenda
 {
@@ -84,30 +85,62 @@ namespace Agenda
             string nume = Console.ReadLine();
             Console.Write("Introduceti descrierea activitatii:");
             string descriere= Console.ReadLine();
-            Console.Write("Introduceti tipul activitatii:");
-            string tip= Console.ReadLine();
-            do {
+            int tipInt = 0;
+            do
+            {
+                Console.WriteLine("Introduceti tipul activitatii:");
+                Console.WriteLine(" 1 - Scoala \n 2 - Facultate \n 3 - Serviciu\n 4 - Recreere\n 5 - Reminder");
+                tipInt = Convert.ToInt32(Console.ReadLine());
+                
+                
+            } while (tipInt > 5 && tipInt < 1);
+            string tip = Convert.ToString((TipActivitate)tipInt);
+
+            Console.WriteLine("Lista optiuni:\n 1 - Notificari\n 2 - Repetare\n 4 - Alarme\n");
+            Console.Write("Introduceti optiunile[ separate prin spatiu ] ");
+            string[] optiuniString=Console.ReadLine().Split(' ');
+            OptiuniActivitate optiuni = OptiuniActivitate.Fara;
+            string[] Optiuni= new string[0];
+            foreach (var optiuneString in optiuniString)
+            {   
+                if(int.TryParse(optiuneString, out int optiuneInt))
+                {
+                    optiuni |= (OptiuniActivitate)optiuneInt;
+                    Array.Resize(ref Optiuni, Optiuni.Length + 1);
+                    Optiuni[Optiuni.Length - 1] = Convert.ToString((OptiuniActivitate)optiuneInt);
+
+                }
+            }
+            
+
+
+
+
+            do
+            {
                 Console.WriteLine("Introduceti data si ora ( zz-ll-aaaa hh:mm:ss):");
                 string input = Console.ReadLine();
                 if (DateTime.TryParse(input, out dateTime))
-                    {
+                {
                     k = true;
 
-                } else
+                }
+                else
                 {
                     Console.WriteLine("Formatul este incorect, reintroduceti!");
                 }
             } while (!k);
-                
-            Activitate activitate = new Activitate( nume, descriere, tip,dateTime);
+            
+            Activitate activitate = new Activitate( nume, descriere, tip ,dateTime, Optiuni);
             return activitate;
             
         }
 
         public static void AfisareActivitate(Activitate activitate)
         {
+            string optiuniString = string.Join(",", activitate.Optiuni);
             string infoActivitate = string.Format($"Ultima activitate introdusa:\nNume:{activitate.Nume}\nDescriere:{activitate.Descriere}\n" +
-                $"Tip:{activitate.Tip}\nData si ora:{activitate.DataOra}\n");
+                $"Tip:{activitate.Tip}\nOptiuni: {optiuniString}\nData si ora:{activitate.DataOra}\n");
             Console.WriteLine(infoActivitate);
         } 
         public static void AfisareActivitati(Activitate[] activitati, int nrActivitati ) //TEMA LAB 3- Afisare datelor din vector
